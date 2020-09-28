@@ -1,0 +1,50 @@
+{% extends "base.html.twig" %}
+
+{% block title %}article{% endblock %}
+
+{% block body %}
+    
+    <article>
+        <h2>{{ article.title }}</h2>
+        <div class="metadata">
+            Ecrit le {{ article.createdAt|date("d/m/Y à H:i:s") }} dans la catégorie {{ article.category.title }}
+        </div>
+        <div class="content">
+            <img src="{{ article.image }}" alt="">
+            {{ article.content|raw }}
+        </div>
+        <a href="{{ path('blog_edit', {'id': article.id}) }}" class="btn btn-success">Editer l'article</a>
+    </article>
+
+    <section class="comments">
+
+        <h1>{{ article.comments|length }} Commentaires:</h1>
+        {% for comment in article.comments %}
+            <div class=comment>
+                <div class="row">
+                    <div class="clo-3">
+                        {{ comment.author }} <small>{{ comment.createAt|date("d/m/Y à H:i:s") }}</small>
+                    </div>
+                    <div class="col">
+                        {{ comment.content|raw }}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        {% if app.user %}
+            {{ form_start(commentForm) }}
+
+            {{ form_row(commentForm.author, {'attr': {'placeholder': 'Author name ...'}}) }}
+            {{ form_row(commentForm.content, {'attr': {'placeholder': 'Comment content ...'}}) }}
+
+            <button type="submit" class="btn btn-success">Save !</button>
+
+            {{ form_end(commentForm) }}
+        {% else %}
+            <h2>Vous ne pouvez pas commenter si vous n'êtes pas connecté !</h2>
+            <a href="{{ path('security_login') }}" class="btn btn-primary">Connexion !</a>
+        {% endif %}
+    </section>
+
+{% endblock %}
